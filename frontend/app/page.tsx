@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function Home() {
   const [senderName, setSenderName] = useState("");
   const [receiverName, setReceiverName] = useState("");
-  const [templateId, setTemplateId] = useState("cute-cats-01");
+  const [templateId, setTemplateId] = useState("pleading-cats-02"); // Updated default to match your new options
   const [generatedLink, setGeneratedLink] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +49,7 @@ export default function Home() {
             <input 
               type="text" 
               required
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black"
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black w-full"
               value={senderName} 
               onChange={(e) => setSenderName(e.target.value)} 
             />
@@ -60,15 +60,27 @@ export default function Home() {
             <input 
               type="text" 
               required
-              className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black"
+              className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black w-full"
               value={receiverName} 
               onChange={(e) => setReceiverName(e.target.value)} 
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-semibold text-gray-700">Select Interactive Style</label>
+            <select 
+              className="mt-1 block w-full rounded-xl border border-gray-300 p-3 text-black bg-white focus:ring-2 focus:ring-pink-400 focus:outline-none transition w-full"
+              value={templateId}
+              onChange={(e) => setTemplateId(e.target.value)}
+            >
+              <option value="pleading-cats-02">🐱 Cute Pleading Cats (Button Scaling)</option>
+              <option value="retro-pixel-03">👾 Retro Arcade Pixel (Evasive Escaping Button)</option>
+            </select>
+          </div>
+
           <button 
             type="submit" 
-            className="w-full bg-pink-500 text-white p-2 rounded-md font-semibold hover:bg-pink-600 transition"
+            className="w-full bg-pink-500 text-white p-3 rounded-md font-semibold hover:bg-pink-600 transition mt-4"
           >
             Generate Proposal Link
           </button>
