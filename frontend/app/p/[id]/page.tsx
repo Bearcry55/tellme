@@ -8,6 +8,7 @@ interface ProposalData {
   sender_name: string;
   receiver_name: string;
   template_id: string;
+  custom_question?: string;
 }
 
 export default function ProposalView() {

@@ -61,7 +61,7 @@ export default function StatusCheck() {
         
         <div className="border border-slate-800 p-4 rounded-lg bg-black/40 text-left mb-6 space-y-2">
           <p className="text-sm"><span className="text-slate-500 font-semibold">Agent (You):</span> {data?.sender_name}</p>
-          <p className="text-sm"><span className="text-slate-500 font-semibold">Target (Crush):</span> {data?.receiver_name}</p>
+          <p className="text-sm"><span className="text-slate-500 font-semibold">Target (partner):</span> {data?.receiver_name}</p>
         </div>
 
         <div className="my-8 py-6 rounded-2xl border-2 border-dashed border-slate-800 bg-slate-950">
