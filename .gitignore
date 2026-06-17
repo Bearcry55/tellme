@@ -1,0 +1,45 @@
+# =========================================================================
+# FRONTEND IGNORES (Next.js / Node)
+# =========================================================================
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.*
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# Testing & Build outputs
+frontend/coverage/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Debug and Environment Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+frontend/.env*
+frontend/.vercel
+
+# TypeScript build cash
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# =========================================================================
+# BACKEND IGNORES (Go / Golang)
+# =========================================================================
+# Ignore compiled binaries that you build locally
+backend/*.exe
+backend/*.test
+backend/backend
+backend/main
+
+# =========================================================================
+# GLOBAL SYSTEM IGNORES
+# =========================================================================
+.DS_Store
+Thumbs.db
+*.pem
