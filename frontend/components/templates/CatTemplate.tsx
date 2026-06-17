@@ -18,6 +18,26 @@ export default function CatTemplate({ data }: TemplateProps) {
   const cryingCatGif = "https://gifdb.com/images/high/sobbing-sad-cat-crying-face-uksj1lfb4y04w615.gif";
   const happyCatGif = "https://gifdb.com/images/high/happy-cat-gif-0xi6309m0qi3eyqc.webp";
 
+  // Handles the "Yes" click and notifies the Go backend tracker
+  const handleYesClick = async () => {
+    setYesPressed(true);
+    try {
+      // Automatically parses the unique ID straight out of your browser's current link path URL
+      const pathParts = window.location.pathname.split("/");
+      const id = pathParts[pathParts.length - 1];
+
+      await fetch(`http://localhost:8080/api/proposals/${id}/respond`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ response: "accepted" }),
+      });
+    } catch (err) {
+      console.error("Failed to sync response status with the Go engine:", err);
+    }
+  };
+
   const getNoButtonText = () => {
     const phrases = [
       "No",
@@ -71,7 +91,7 @@ export default function CatTemplate({ data }: TemplateProps) {
         <button
           style={{ fontSize: `${yesButtonSize}px` }}
           className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95"
-          onClick={() => setYesPressed(true)}
+          onClick={handleYesClick}
         >
           Yes! 💖
         </button>

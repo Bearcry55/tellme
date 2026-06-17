@@ -13,6 +13,26 @@ export default function PixelTemplate({ data }: TemplateProps) {
   const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
   const [isMoved, setIsMoved] = useState(false);
 
+  // Handles the "[ ACCEPT ]" game trigger click and updates the radar dashboard
+  const handleAcceptClick = async () => {
+    setYesPressed(true);
+    try {
+      // Automatically parses the unique ID straight out of your browser's current link path URL
+      const pathParts = window.location.pathname.split("/");
+      const id = pathParts[pathParts.length - 1];
+
+      await fetch(`http://localhost:8080/api/proposals/${id}/respond`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ response: "accepted" }),
+      });
+    } catch (err) {
+      console.error("Failed to sync response status with the Go engine:", err);
+    }
+  };
+
   const teleportNoButton = () => {
     // Generate random coordinate offsets to teleport the button away
     const randomX = (Math.random() - 0.5) * 300;
@@ -58,7 +78,7 @@ export default function PixelTemplate({ data }: TemplateProps) {
         <div className="flex justify-center items-center gap-6 min-h-[60px] relative">
           <button
             className="bg-yellow-400 hover:bg-yellow-50 text-purple-950 font-black py-3 px-6 uppercase border-b-4 border-yellow-600 active:border-b-0 transition-all rounded-none"
-            onClick={() => setYesPressed(true)}
+            onClick={handleAcceptClick}
           >
             [ ACCEPT ]
           </button>
