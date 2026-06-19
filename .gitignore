@@ -43,3 +43,6 @@ backend/main
 .DS_Store
 Thumbs.db
 *.pem
+
+#databaselink
+backend/.env
