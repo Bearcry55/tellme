@@ -1,22 +1,134 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-/* Changed from "@theme inline {" to just "@theme {" */
-
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --pink-orchid: #CDB4DB;
+  --pastel-petal: #FFC8DD;
+  --blush-pop: #FFAFCC;
+  --icy-blue: #BDE0FE;
+  --sky-blue: #A2D2FF;
+  --charcoal: #2C2C2C;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #FFF5F7 0%, #F0F7FF 100%);
+  color: var(--charcoal);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Premium Interactive Button Architecture */
+.premium-btn {
+  font-size: 1.1rem;
+  color: #fafafa;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 2px solid var(--charcoal);
+  background: var(--charcoal);
+  box-shadow: 4px 4px 0px var(--blush-pop);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.premium-btn:hover {
+  background: #3d3d3d;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--blush-pop);
+}
+
+.premium-btn:active {
+  box-shadow: 0px 0px 0px transparent;
+  transform: translate(4px, 4px);
+}
+
+.premium-btn-secondary {
+  font-size: 1.1rem;
+  color: var(--charcoal);
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 2px solid var(--charcoal);
+  background: #FFFFFF;
+  box-shadow: 4px 4px 0px var(--icy-blue);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.premium-btn-secondary:hover {
+  background: #FBFBFF;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--icy-blue);
+}
+
+.premium-btn-secondary:active {
+  box-shadow: 0px 0px 0px transparent;
+  transform: translate(4px, 4px);
+}
+/* Custom Uiverse Link Copy Buttons mapped to your palette */
+.cta-share, .cta-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 22px;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.cta-share:before, .cta-track:before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 0;
+  display: block;
+  border-radius: 50px;
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Share button uses Icy Blue */
+.cta-share:before { background: var(--icy-blue); }
+/* Track button uses Soft Pink */
+.cta-track:before { background: var(--pastel-petal); }
+
+.cta-share span, .cta-track span {
+  position: relative;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--charcoal);
+  text-transform: uppercase;
+}
+
+.cta-share svg, .cta-track svg {
+  position: relative;
+  margin-left: 10px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke: var(--charcoal);
+  stroke-width: 2.5;
+  transform: translateX(-5px);
+  transition: all 0.3s ease;
+}
+
+.cta-share:hover:before, .cta-track:hover:before {
+  width: 100%;
+  top: 0;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.cta-share:hover svg, .cta-track:hover svg {
+  transform: translateX(0);
+}
+
+.cta-share:active, .cta-track:active {
+  transform: scale(0.95);
 }
