@@ -137,3 +137,45 @@ body {
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0px var(--sky-blue);
 }
+.container-city {
+  background:
+    radial-gradient(circle at top, #243b55 0%, #0f172a 60%, #020617 100%);
+  position: relative;
+}
+
+.city-reveal-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%);
+  pointer-events: none;
+  transition: clip-path 0.08s linear;
+  z-index: 10;
+}
+
+.blinking-eyes {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #ff4d6d;
+  box-shadow:
+    20px 0 #ff4d6d,
+    0 0 12px #ff4d6d;
+  animation: blink 1.8s infinite;
+  z-index: 20;
+}
+
+@keyframes blink {
+  0%, 45%, 100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.header-text {
+  text-shadow: 0 2px 20px rgba(255,255,255,0.2);
+}
