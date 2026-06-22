@@ -10,64 +10,36 @@
 }
 
 body {
-  background: linear-gradient(135deg, #FFF5F7 0%, #F0F7FF 100%);
+  margin: 0;
+  padding: 0;
   color: var(--charcoal);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+   background-color: transparent;
 }
 
-/* Premium Interactive Button Architecture */
-.premium-btn {
-  font-size: 1.1rem;
-  color: #fafafa;
-  text-transform: uppercase;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  padding: 14px 28px;
-  border-radius: 12px;
-  border: 2px solid var(--charcoal);
-  background: var(--charcoal);
-  box-shadow: 4px 4px 0px var(--blush-pop);
-  cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+/* --- Section Theme Systems (No Glass, Pure Solid/Gradients) --- */
+.theme-hero {
+  background: linear-gradient(180deg, #FFF5F7 0%, #FFF9FA 100%);
 }
 
-.premium-btn:hover {
-  background: #3d3d3d;
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--blush-pop);
+.theme-catalog {
+  background: #BDE0FE; /* Crisp Icy Blue background */
 }
 
-.premium-btn:active {
-  box-shadow: 0px 0px 0px transparent;
-  transform: translate(4px, 4px);
+.theme-form {
+  background: #2C2C2C; /* Deep Luxury Charcoal background */
+  color: #FFFFFF;
 }
 
-.premium-btn-secondary {
-  font-size: 1.1rem;
-  color: var(--charcoal);
-  text-transform: uppercase;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  padding: 14px 28px;
-  border-radius: 12px;
-  border: 2px solid var(--charcoal);
+/* Premium Component Cards (Solid, Sharp, High Contrast) */
+.solid-card {
   background: #FFFFFF;
-  box-shadow: 4px 4px 0px var(--icy-blue);
-  cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  border: 3px solid var(--charcoal);
+  border-radius: 24px;
+  box-shadow: 8px 8px 0px var(--charcoal);
 }
 
-.premium-btn-secondary:hover {
-  background: #FBFBFF;
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--icy-blue);
-}
-
-.premium-btn-secondary:active {
-  box-shadow: 0px 0px 0px transparent;
-  transform: translate(4px, 4px);
-}
 /* Custom Uiverse Link Copy Buttons mapped to your palette */
 .cta-share, .cta-track {
   position: relative;
@@ -92,9 +64,7 @@ body {
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Share button uses Icy Blue */
-.cta-share:before { background: var(--icy-blue); }
-/* Track button uses Soft Pink */
+.cta-share:before { background: var(--sky-blue); }
 .cta-track:before { background: var(--pastel-petal); }
 
 .cta-share span, .cta-track span {
@@ -125,10 +95,45 @@ body {
   border-radius: 12px;
 }
 
-.cta-share:hover svg, .cta-track:hover svg {
-  transform: translateX(0);
-}
+.cta-share:hover svg, .cta-track:hover svg { transform: translateX(0); }
+.cta-share:active, .cta-track:active { transform: scale(0.95); }
 
-.cta-share:active, .cta-track:active {
-  transform: scale(0.95);
+/* Main CTA Overrides */
+.premium-btn {
+  font-size: 1.1rem;
+  color: #fafafa;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 2px solid var(--charcoal);
+  background: var(--charcoal);
+  box-shadow: 4px 4px 0px var(--blush-pop);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.premium-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--blush-pop);
+}
+.premium-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px transparent; }
+
+.premium-btn-secondary {
+  font-size: 1.1rem;
+  color: var(--charcoal);
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 2px solid var(--charcoal);
+  background: #FFFFFF;
+  box-shadow: 4px 4px 0px var(--sky-blue);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.premium-btn-secondary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--sky-blue);
 }
