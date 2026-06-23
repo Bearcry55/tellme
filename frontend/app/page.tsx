@@ -28,7 +28,7 @@ export default function Home() {
             <span className="text-xl font-black tracking-tight text-[#2C2C2C]">Tell<span className="text-[#FFAFCC]">Me</span></span>
           </div>
           <button onClick={() => scrollToRef(catalogSectionRef)} className="text-sm font-bold border-2 border-[#2C2C2C] px-4 py-2 rounded-xl bg-white shadow-[3px_3px_0px_#2C2C2C] hover:translate-y-[-1px] transition">
-            Explore Strategies
+            Explore Templates
           </button>
         </nav>
 
