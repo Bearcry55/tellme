@@ -1,0 +1,92 @@
+.proposalCard {
+  background: #3a3a3a;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.formInput {
+  width: 100%;
+  background: #262626;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  color: white;
+  font-weight: 600;
+  outline: none;
+}
+
+.formInputPurple:focus {
+  border-color: #cdb4db;
+}
+
+.formInputPink:focus {
+  border-color: #ffafcc;
+}
+
+.formInputBlue:focus {
+  border-color: #bde0fe;
+}
+
+.strategyBox {
+  padding: 1rem;
+  background: #262626;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #d1d5db;
+}
+
+.modifyBtn {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #ffafcc;
+  cursor: pointer;
+}
+
+.modifyBtn:hover {
+  text-decoration: underline;
+}
+
+.resultBox {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1.5rem;
+  background: #252525;
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+
+@media (max-width: 640px) {
+  .proposalCard {
+    padding: 3rem 2rem;
+  }
+
+  .resultBox {
+    flex-direction: column;
+  }
+}
+
+
+
+
