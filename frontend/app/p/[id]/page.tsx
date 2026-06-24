@@ -3,6 +3,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CatTemplate from "@/components/templates/CatTemplate";
 import PixelTemplate from "@/components/templates/PixelTemplate";
+import TamagotchiTemplate from "@/components/templates/TamagotchiPetTemplate";
+import CyberpunkTemplate from "@/components/templates/CyberpunkHackTemplate";
 
 interface ProposalData {
   sender_name: string;
@@ -50,6 +52,10 @@ export default function ProposalView() {
       return <CatTemplate data={data} />;
     case "retro-pixel-03":
       return <PixelTemplate data={data} />;
+    case "tamagotchi-pet-04":
+      return <TamagotchiTemplate data={data} />;
+    case "cyberpunk-hack-05":
+      return <CyberpunkTemplate data={data} />;
     default:
       // Fallback structural layout if the ID matches something unexpected
       return <CatTemplate data={data || { sender_name: "Someone", receiver_name: "You" }} />;

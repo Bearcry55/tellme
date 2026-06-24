@@ -38,6 +38,26 @@ export default function SkylineCatalog({
       iconClass: styles.iconPurple,
       badgeClass: styles.badgePurple,
     },
+    {
+      id: "tamagotchi-pet-04",
+      title: "Tamagotchi Virtual Pet",
+      icon: "🥺",
+      description: "Virtual pet mechanics where the 'Ignore' choice physically shrinks to pixels on hover.",
+      badge: "Forced Caretaking",
+      selectedClass: styles.selectedPink, // Using existing styles to keep it clean
+      iconClass: styles.iconPink,
+      badgeClass: styles.badgePink,
+    },
+    {
+      id: "cyberpunk-hack-05",
+      title: "Cyberpunk Mainframe",
+      icon: "🔓",
+      description: "Mainframe matrix terminal. Denying authorization glitches the grid until compliance.",
+      badge: "Intrusion Override",
+      selectedClass: styles.selectedPurple,
+      iconClass: styles.iconPurple,
+      badgeClass: styles.badgePurple,
+    },
   ];
 
   // Filter based on search query
