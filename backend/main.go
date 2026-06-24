@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
@@ -26,6 +27,7 @@ type Proposal struct {
 	Status         string    `json:"status"`
 	TrackerID      string    `json:"tracker_id"`
 	CreatedAt      time.Time `json:"created_at"`
+	CreatorViewed  bool      `json:"creator_viewed"`
 }
 
 var db *sql.DB
@@ -38,32 +40,55 @@ func generateUniqueID() string {
 	return hex.EncodeToString(bytes)
 }
 
+//  BACKGROUND WORKER: Cleans up database dead-weight safely every 10 minutes
+func startDatabaseJanitor(database *sql.DB) {
+	for {
+		time.Sleep(10 * time.Minute)
+
+		// Deletes pending links, declined links, or links already viewed by creator older than 1 hour
+		query := `
+			DELETE FROM proposals 
+			WHERE (status = 'pending' OR status = 'declined' OR creator_viewed = true)
+			  AND created_at < NOW() - INTERVAL '1 hour'`
+
+		result, err := database.Exec(query)
+		if err != nil {
+			log.Printf("Janitor Error: Failed to execute automated cleanup: %v", err)
+			continue
+		}
+
+		rows, _ := result.RowsAffected()
+		if rows > 0 {
+			log.Printf("Janitor Clean: Successfully purged %d expired or completed rows from database.", rows)
+		}
+	}
+}
+
 func main() {
 	var err error
 
-	// 🔐 Pull the Connection String safely from your local system/OS environment
 	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
-		log.Fatal("❌ Critical Configuration Error: DATABASE_URL variable is not set in your environment!")
+		log.Fatal(" Critical Configuration Error: DATABASE_URL variable is not set!")
 	}
 
-	// Connect to Supabase PostgreSQL
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Failed to open database connection:", err)
 	}
 	defer db.Close()
 
-	// Verify connection integrity
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("Database unreachable. Ensure your .env string contains valid credentials:", err)
+		log.Fatal("Database unreachable. Check connection string credentials:", err)
 	}
+
+	//  Fire up the background cleanup worker
+	go startDatabaseJanitor(db)
 
 	r := gin.Default()
 	r.Use(cors.Default())
 
-	// 🛑 RATE LIMIT CONFIGURATION (5 requests per 1 minute interval)
 	rate := limiter.Rate{
 		Period: 1 * time.Minute,
 		Limit:  5,
@@ -71,7 +96,7 @@ func main() {
 	store := memory.NewStore()
 	rateLimitMiddleware := mgin.NewMiddleware(limiter.New(store, rate))
 
-	// 1. POST: Create a proposal (Protected by Rate Limiting Middleware)
+	//  POST: Create a proposal (Timer completely removed, handled by DB default timestamp)
 	r.POST("/api/proposals", rateLimitMiddleware, func(c *gin.Context) {
 		var req Proposal
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -79,7 +104,6 @@ func main() {
 			return
 		}
 
-		// 💡 THE FIX: If frontend sends an empty string, set the default question text
 		if req.CustomQuestion == "" {
 			req.CustomQuestion = "Will you be my partner?"
 		}
@@ -88,19 +112,14 @@ func main() {
 		trackerID := "track-" + generateUniqueID()
 
 		query := `INSERT INTO proposals (id, sender_name, receiver_name, template_id, custom_question, status, tracker_id) 
-		          VALUES ($1, $2, $3, $4, $5, $6, $7)`
-		
-		_, err = db.Exec(query, proposalID, req.SenderName, req.ReceiverName, req.TemplateID, req.CustomQuestion, "pending", trackerID)
+                  VALUES ($1, $2, $3, $4, $5, $6, $7)`
+
+		_, err = db.ExecContext(c.Request.Context(), query, proposalID, req.SenderName, req.ReceiverName, req.TemplateID, req.CustomQuestion, "pending", trackerID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save proposal to the cloud database"})
+			log.Printf(" DB Insert Error: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save proposal to cloud"})
 			return
 		}
-
-		// ⏰ Safety net: Wipes unanswered links after 10 hours
-		time.AfterFunc(10*time.Hour, func() {
-			_, _ = db.Exec("DELETE FROM proposals WHERE id = $1 AND status = 'pending'", proposalID)
-			log.Printf("🗑️ Safety Clean: Unanswered proposal %s expired.", proposalID)
-		})
 
 		c.JSON(http.StatusOK, gin.H{
 			"proposal_id": proposalID,
@@ -108,18 +127,26 @@ func main() {
 		})
 	})
 
-	// 2. GET: Fetch details for the Crush viewing the link
+	// 2. GET: Fetch details for the Crush (Strict 1-hour enforcement via SQL)
 	r.GET("/api/proposals/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		var p Proposal
 
-		query := `SELECT id, sender_name, receiver_name, template_id, custom_question, status FROM proposals WHERE id = $1`
-		err := db.QueryRow(query, id).Scan(&p.ID, &p.SenderName, &p.ReceiverName, &p.TemplateID, &p.CustomQuestion, &p.Status)
+		// Filters out links that have already cross-passed the 1-hour mark
+		query := `
+			SELECT id, sender_name, receiver_name, template_id, custom_question, status 
+			FROM proposals 
+			WHERE id = $1 AND created_at > NOW() - INTERVAL '1 hour'`
+
+		err := db.QueryRowContext(c.Request.Context(), query, id).Scan(
+			&p.ID, &p.SenderName, &p.ReceiverName, &p.TemplateID, &p.CustomQuestion, &p.Status,
+		)
 
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{"error": "This link has expired or never existed! 🥺"})
 			return
 		} else if err != nil {
+			log.Printf(" DB Read Error (Crush Endpoint): %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database read error"})
 			return
 		}
@@ -138,9 +165,11 @@ func main() {
 			return
 		}
 
-		query := `UPDATE proposals SET status = $1 WHERE id = $2`
-		result, err := db.Exec(query, body.Response, id)
+		// Enforce update only if it falls within the 1-hour active timeframe
+		query := `UPDATE proposals SET status = $1 WHERE id = $2 AND created_at > NOW() - INTERVAL '1 hour'`
+		result, err := db.ExecContext(c.Request.Context(), query, body.Response, id)
 		if err != nil {
+			log.Printf(" DB Update Error (Response Endpoint): %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update status"})
 			return
 		}
@@ -151,21 +180,23 @@ func main() {
 			return
 		}
 
-		if body.Response == "declined" {
-			_, _ = db.Exec("DELETE FROM proposals WHERE id = $1", id)
-		}
-
 		c.JSON(http.StatusOK, gin.H{"status": "updated"})
 	})
 
-	// 4. GET: Route for Creator to check live updates (Self-Destruct on Read Trigger)
+	// 4. GET: Route for Creator (Includes 1-hour lifespan check and flags viewed status)
 	r.GET("/api/track/:tracker_id", func(c *gin.Context) {
 		trackerID := c.Param("tracker_id")
 		var p Proposal
 		var id string
 
-		query := `SELECT id, sender_name, receiver_name, template_id, custom_question, status FROM proposals WHERE tracker_id = $1`
-		err := db.QueryRow(query, trackerID).Scan(&id, &p.SenderName, &p.ReceiverName, &p.TemplateID, &p.CustomQuestion, &p.Status)
+		query := `
+			SELECT id, sender_name, receiver_name, template_id, custom_question, status 
+			FROM proposals 
+			WHERE tracker_id = $1 AND created_at > NOW() - INTERVAL '1 hour'`
+
+		err := db.QueryRowContext(c.Request.Context(), query, trackerID).Scan(
+			&id, &p.SenderName, &p.ReceiverName, &p.TemplateID, &p.CustomQuestion, &p.Status,
+		)
 
 		if err == sql.ErrNoRows {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -174,15 +205,19 @@ func main() {
 			})
 			return
 		} else if err != nil {
+			log.Printf(" DB Read Error (Tracking Endpoint): %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database parsing error"})
 			return
 		}
 
-		if p.Status == "accepted" {
-			time.AfterFunc(10*time.Second, func() {
-				_, _ = db.Exec("DELETE FROM proposals WHERE id = $1", id)
-				log.Printf("🗑️ Self-Destruct on Read: Creator saw the 'accepted' status. Row %s successfully wiped.", id)
-			})
+		// Flipping the viewed flag so the Janitor knows it can safely wipe this record later
+		if p.Status == "accepted" || p.Status == "declined" {
+			updateQuery := `UPDATE proposals SET creator_viewed = true WHERE id = $1`
+			if _, updateErr := db.ExecContext(context.Background(), updateQuery, id); updateErr != nil {
+				log.Printf(" Warning: Failed to mark row %s as creator_viewed: %v", id, updateErr)
+			} else {
+				log.Printf(" Creator checked tracked status for %s. Marked as viewed.", id)
+			}
 		}
 
 		c.JSON(http.StatusOK, p)
