@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import styles from "./Catalog.module.css";
 
-import styles from "./SkylineCatalog.module.css"
 interface SkylineCatalogProps {
   templateId: string;
   setTemplateId: (id: string) => void;
@@ -13,93 +14,92 @@ export default function SkylineCatalog({
   setTemplateId,
   scrollToForm,
 }: SkylineCatalogProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Template Data Array for clean filtering
+  const templates = [
+    {
+      id: "pleading-cats-02",
+      title: "Pleading Cats Arena",
+      icon: "🐱",
+      description: 'If they attempt to decline or hover over "No", "Yes" expands.',
+      badge: "Guaranteed Scaling",
+      selectedClass: styles.selectedPink,
+      iconClass: styles.iconPink,
+      badgeClass: styles.badgePink,
+    },
+    {
+      id: "retro-pixel-03",
+      title: "Retro Arcade Evasion",
+      icon: "👾",
+      description: "The targeted rejection switch continuously computes vector evasions.",
+      badge: "Evasive Physics",
+      selectedClass: styles.selectedPurple,
+      iconClass: styles.iconPurple,
+      badgeClass: styles.badgePurple,
+    },
+  ];
+
+  // Filter based on search query
+  const filteredTemplates = templates.filter((template) =>
+    template.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <section className="theme-catalog relative z-10 py-24 px-6 overflow-hidden">
-      
+    <section className="theme-catalog relative z-10 py-16 px-6 overflow-hidden">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[#2C2C2C]">
+          Choose a Template
+        </h2>
+        <p className="text-[#2C2C2C]/70 font-bold mt-3">
+          Choose the interaction style that matches your mission.
+        </p>
 
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[#2C2C2C]">
-            Interactive Strategies
-          </h2>
-
-          <p className="text-[#2C2C2C]/70 font-bold mt-3">
-            Choose the interaction style that matches your mission.
-          </p>
+        {/* SEARCH BAR */}
+        <div className="mt-8 max-w-md mx-auto">
+          <input
+            type="text"
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2.5 rounded-xl border-2 border-[#111] font-bold shadow-[3px_3px_0_#111] focus:outline-none focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-[2px_2px_0_#111] transition-all"
+          />
         </div>
+      </div>
 
-        
+      {/* HORIZONTAL SCROLL CONTAINER */}
+      <div className={styles.scrollContainer}>
+        {filteredTemplates.length > 0 ? (
+          filteredTemplates.map((template) => (
+            <div
+              key={template.id}
+              onClick={() => {
+                setTemplateId(template.id);
+                scrollToForm();
+              }}
+              className={`${styles.catalogCard} solid-card ${
+                templateId === template.id ? template.selectedClass : ""
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`${styles.iconBox} ${template.iconClass}`}>
+                  {template.icon}
+                </div>
+                <h3 className={styles.cardTitle}>{template.title}</h3>
+              </div>
 
-    {/* CARD 1 */}
-<div
-  onClick={() => {
-    setTemplateId("pleading-cats-02");
-    scrollToForm();
-  }}
-  className={`${styles.catalogCard} solid-card ${
-    templateId === "pleading-cats-02"
-      ? styles.selectedPink
-      : ""
-  }`}
->
-  <div>
-    <div
-      className={`${styles.iconBox} ${styles.iconPink}`}
-    >
-      🐱
-    </div>
+              <p className={styles.cardDescription}>{template.description}</p>
 
-    <h3 className={styles.cardTitle}>
-      Pleading Cats Arena
-    </h3>
+              <span className={`${styles.badge} ${template.badgeClass}`}>
+                {template.badge}
+              </span>
+            </div>
+          ))
+        ) : (
+          <p className="text-center font-bold text-gray-500 w-full py-4">No templates found.</p>
+        )}
+      </div>
 
-    <p className={styles.cardDescription}>
-      If they attempt to decline or hover over the "No"
-      asset, the "Yes" trigger expands smoothly across the
-      viewport, rendering acceptance absolute.
-    </p>
-  </div>
-
-  <span
-    className={`${styles.badge} ${styles.badgePink}`}
-  >
-    Guaranteed Scaling
-  </span>
-</div>
-         <div
-  onClick={() => {
-    setTemplateId("retro-pixel-03");
-    scrollToForm();
-  }}
-  className={`${styles.catalogCard} solid-card ${
-    templateId === "retro-pixel-03"
-      ? styles.selectedPurple
-      : ""
-  }`}
->
-  <div>
-    <div
-      className={`${styles.iconBox} ${styles.iconPurple}`}
-    >
-      👾
-    </div>
-
-    <h3 className={styles.cardTitle}>
-      Retro Arcade Evasion
-    </h3>
-
-    <p className={styles.cardDescription}>
-      Features customized chiptune retro aesthetics. The
-      targeted rejection switch continuously computes vector
-      evasions, flying away erratically upon approaches.
-    </p>
-  </div>
-
-  <span
-    className={`${styles.badge} ${styles.badgePurple}`}
-  >
-    Evasive Physics
-  </span>
-</div>
       {/* WAVE */}
       <div
         className="absolute bottom-0 left-0 w-full overflow-hidden"
