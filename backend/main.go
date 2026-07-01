@@ -1,17 +1,17 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"os"
-	"time"
-
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq" // PostgreSQL driver
-	"github.com/ulule/limiter/v3"
-	mgin "github.com/ulule/limiter/v3/drivers/middleware/gin"
-	"github.com/ulule/limiter/v3/drivers/store/memory"
+    "database/sql"
+    "log"
+    "os"
+    "time"
+    "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
+    "github.com/joho/godotenv"
+    _ "github.com/lib/pq"
+    "github.com/ulule/limiter/v3"
+    mgin "github.com/ulule/limiter/v3/drivers/middleware/gin"
+    "github.com/ulule/limiter/v3/drivers/store/memory"
 )
 
 type Proposal struct {
@@ -29,12 +29,11 @@ type Proposal struct {
 var db *sql.DB
 
 func main() {
-	var err error
-
-	connStr := os.Getenv("DATABASE_URL")
-	if connStr == "" {
-		log.Fatal(" Critical Configuration Error: DATABASE_URL variable is not set!")
-	}
+    if err := godotenv.Load(); err != nil {
+        log.Println("No .env file found, relying on system environment variables")
+    }
+    var err error
+    connStr := os.Getenv("DATABASE_URL")
 
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
