@@ -61,9 +61,9 @@ func main() {
 
 	// Endpoints bound to your handler functions
 	r.POST("/api/proposals", rateLimitMiddleware, handleCreateProposal)
-	r.GET("/api/proposals/:id", handleGetProposal)
-	r.POST("/api/proposals/:id/respond", handleRespondProposal)
-	r.GET("/api/track/:tracker_id", handleTrackProposal)
+r.GET("/api/proposals/:id", rateLimitMiddleware, handleGetProposal)
+r.POST("/api/proposals/:id/respond", rateLimitMiddleware, handleRespondProposal)
+r.GET("/api/track/:tracker_id", rateLimitMiddleware, handleTrackProposal)
 
 	r.Run(":8080")
 }
