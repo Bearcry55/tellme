@@ -46,7 +46,13 @@ func main() {
 		log.Fatal("Database unreachable. Check connection string credentials:", err)
 	}
 
-	//  Fire up the background cleanup worker (Instant run + 10m ticker)
+	
+	//make come clean connection reqsuest 
+	db.SetMaxOpenConns(5)
+    db.SetMaxIdleConns(2)
+    db.SetConnMaxLifetime(30 * time.Minute)
+
+    //  Fire up the background cleanup worker (Instant run + 10m ticker)
 	go startDatabaseJanitor(db)
 
 	r := gin.Default()
